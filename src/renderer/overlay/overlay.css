@@ -1,0 +1,159 @@
+:root {
+  --buddy: #3b82f6;
+  --buddy-glow: rgba(59, 130, 246, 0.65);
+  --bubble-bg: rgba(17, 24, 39, 0.92);
+  --bubble-fg: #f9fafb;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  user-select: none;
+}
+
+#highlight {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: 2.5px solid var(--buddy);
+  border-radius: 8px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18), 0 0 18px var(--buddy-glow);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+#highlight.ring {
+  border-radius: 50%;
+}
+
+#highlight.visible {
+  opacity: 1;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.08), 0 0 26px var(--buddy-glow);
+  }
+}
+
+#buddy {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+  transition: opacity 0.25s ease;
+}
+
+#buddy.hidden {
+  opacity: 0;
+}
+
+#triangle {
+  display: block;
+  fill: var(--buddy);
+  filter: drop-shadow(0 0 6px var(--buddy-glow));
+  transform-origin: 30% 30%;
+  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.15s ease;
+}
+
+#buddy.flying #triangle {
+  filter: drop-shadow(0 0 14px var(--buddy-glow));
+}
+
+#buddy:not([data-state='idle']):not([data-state='responding']) #triangle {
+  opacity: 0;
+}
+
+#wave {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  display: none;
+  gap: 3px;
+  align-items: center;
+  height: 22px;
+}
+
+#buddy[data-state='listening'] #wave {
+  display: flex;
+}
+
+#wave span {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--buddy);
+  box-shadow: 0 0 6px var(--buddy-glow);
+  transition: height 0.06s linear;
+}
+
+#spinner {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid rgba(59, 130, 246, 0.25);
+  border-top-color: var(--buddy);
+  display: none;
+  animation: spin 0.8s linear infinite;
+}
+
+#buddy[data-state='processing'] #spinner {
+  display: block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#bubble {
+  position: absolute;
+  left: 26px;
+  top: 18px;
+  max-width: 340px;
+  width: max-content;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--bubble-bg);
+  color: var(--bubble-fg);
+  font-size: 13.5px;
+  line-height: 1.4;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: scale(0.6);
+  transform-origin: top left;
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+#bubble.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#bubble.label {
+  background: var(--buddy);
+  font-weight: 600;
+}
+
+#bubble.flip-x {
+  left: auto;
+  right: 6px;
+  transform-origin: top right;
+}
+
+#bubble.flip-y {
+  top: auto;
+  bottom: 22px;
+}

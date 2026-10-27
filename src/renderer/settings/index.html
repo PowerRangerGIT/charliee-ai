@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Clicky Local — Ajustes</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <header>
+      <svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 2 L21 11 L12 13 L9 22 Z" fill="#3b82f6" /></svg>
+      <div>
+        <h1>Clicky Local</h1>
+        <p class="sub">Mantén <b id="hotkeyHint">Ctrl + Shift</b>, habla, suelta. Te contesta y señala en pantalla.</p>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>Modelo de IA</h2>
+        <label>Proveedor
+          <select id="provider"></select>
+        </label>
+        <p class="hint" id="providerHint"></p>
+        <label id="apiKeyRow">API key
+          <input id="apiKey" type="password" autocomplete="off" spellcheck="false" />
+        </label>
+        <label><span id="baseUrlLabel">URL base</span>
+          <input id="baseUrl" type="text" spellcheck="false" />
+        </label>
+        <div class="row">
+          <label class="grow">Modelo
+            <input id="model" type="text" list="modelList" spellcheck="false" />
+            <datalist id="modelList"></datalist>
+          </label>
+          <button id="loadModels" type="button" class="secondary">Cargar modelos</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Pantalla y respuesta</h2>
+        <label class="check"><input type="checkbox" data-path="sendScreenshot" /> Enviar captura de pantalla (necesita modelo con visión)</label>
+        <div class="row">
+          <label class="grow">Resolución máx. de captura (px, 0 = automática)
+            <input type="number" min="0" max="3840" step="64" data-path="screenshotMaxDimension" />
+          </label>
+          <label class="grow">Máx. tokens de respuesta
+            <input type="number" min="64" max="8192" step="64" data-path="maxTokens" />
+          </label>
+        </div>
+        <label class="check"><input type="checkbox" data-path="numberedMarks" /> Numerar los controles de Windows en la captura (la IA señala por número: lo más preciso)</label>
+        <label class="check"><input type="checkbox" data-path="snapToElements" /> Ajustar al botón/control real de Windows y resaltarlo</label>
+        <label class="check"><input type="checkbox" data-path="refinePointing" /> Afinar con zoom cuando señala por coordenadas (segunda consulta)</label>
+        <label class="check"><input type="checkbox" data-path="saveDebug" /> Guardar diagnóstico de la última respuesta (captura + dónde señaló)</label>
+        <label>Instrucciones extra (opcional)
+          <textarea rows="2" data-path="extraInstructions" placeholder="p.ej. háblame de tú y explícame como a un principiante"></textarea>
+        </label>
+        <div class="row">
+          <label class="grow">Atajo para hablar (mantener)
+            <select data-path="hotkey" id="hotkey"></select>
+          </label>
+          <label class="check grow"><input type="checkbox" data-path="showCaption" /> Mostrar texto de la respuesta</label>
+        </div>
+      </section>
+
+      <section>
+        <h2>Voz: lo que dices</h2>
+        <label>Transcripción
+          <select data-path="stt.mode" id="sttMode">
+            <option value="local">Whisper local (gratis, offline tras la 1ª descarga)</option>
+            <option value="openai">API compatible OpenAI (OpenAI, Groq, servidor propio)</option>
+          </select>
+        </label>
+        <div data-show="sttMode=local" class="row">
+          <label class="grow">Modelo Whisper
+            <select data-path="stt.localModel">
+              <option value="onnx-community/whisper-tiny">tiny (~40 MB, rapidísimo)</option>
+              <option value="onnx-community/whisper-base">base (~80 MB, recomendado)</option>
+              <option value="onnx-community/whisper-small">small (~250 MB, más preciso)</option>
+              <option value="onnx-community/whisper-large-v3-turbo">large-v3-turbo (~800 MB, necesita GPU)</option>
+            </select>
+          </label>
+          <button id="preloadWhisper" type="button" class="secondary">Descargar ahora</button>
+        </div>
+        <label>Idioma
+          <select data-path="stt.language">
+            <option value="spanish">Español</option>
+            <option value="english">English</option>
+            <option value="portuguese">Português</option>
+            <option value="french">Français</option>
+            <option value="german">Deutsch</option>
+            <option value="italian">Italiano</option>
+            <option value="">Detectar automáticamente</option>
+          </select>
+        </label>
+        <div data-show="sttMode=openai">
+          <label>URL base <input type="text" data-path="stt.openaiBaseUrl" spellcheck="false" /></label>
+          <div class="row">
+            <label class="grow">API key <input type="password" data-path="stt.openaiApiKey" autocomplete="off" /></label>
+            <label class="grow">Modelo <input type="text" data-path="stt.openaiModel" spellcheck="false" /></label>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Voz: lo que te contesta</h2>
+        <label>Síntesis de voz
+          <select data-path="tts.mode" id="ttsMode">
+            <option value="system">Voces de Windows (gratis, local)</option>
+            <option value="openai">API compatible OpenAI</option>
+            <option value="elevenlabs">ElevenLabs</option>
+            <option value="off">Sin voz (solo texto)</option>
+          </select>
+        </label>
+        <div data-show="ttsMode=system" class="row">
+          <label class="grow">Voz
+            <select data-path="tts.systemVoice" id="systemVoice"><option value="">Predeterminada</option></select>
+          </label>
+          <label class="grow">Velocidad <span id="rateValue"></span>
+            <input type="range" min="0.6" max="1.8" step="0.05" data-path="tts.rate" id="rate" />
+          </label>
+        </div>
+        <div data-show="ttsMode=openai">
+          <label>URL base <input type="text" data-path="tts.openaiBaseUrl" spellcheck="false" /></label>
+          <div class="row">
+            <label class="grow">API key <input type="password" data-path="tts.openaiApiKey" autocomplete="off" /></label>
+            <label class="grow">Modelo <input type="text" data-path="tts.openaiModel" spellcheck="false" /></label>
+            <label class="grow">Voz <input type="text" data-path="tts.openaiVoice" spellcheck="false" /></label>
+          </div>
+        </div>
+        <div data-show="ttsMode=elevenlabs">
+          <div class="row">
+            <label class="grow">API key <input type="password" data-path="tts.elevenlabsApiKey" autocomplete="off" /></label>
+            <label class="grow">Voice ID <input type="text" data-path="tts.elevenlabsVoiceId" spellcheck="false" /></label>
+          </div>
+          <label>Modelo <input type="text" data-path="tts.elevenlabsModel" spellcheck="false" /></label>
+        </div>
+      </section>
+
+      <section>
+        <h2>Actualizaciones</h2>
+        <p class="hint" id="updateText"></p>
+        <label class="check"><input type="checkbox" data-path="autoUpdate" /> Descargar e instalar actualizaciones automáticamente (al cerrar la app)</label>
+        <div class="row">
+          <button id="checkUpdates" type="button" class="secondary">Buscar actualizaciones</button>
+          <button id="updateAction" type="button" hidden></button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Probar sin micrófono</h2>
+        <div class="row">
+          <input id="askText" class="grow" type="text" placeholder="¿Dónde está el botón para guardar?" />
+          <button id="ask" type="button">Preguntar</button>
+        </div>
+        <p id="answer" class="answer"></p>
+        <button id="clearHistory" type="button" class="link">Reiniciar conversación</button>
+      </section>
+    </main>
+
+    <footer>
+      <pre id="log"></pre>
+      <button id="save" type="button">Guardar</button>
+    </footer>
+    <script type="module" src="settings.js"></script>
+  </body>
+</html>

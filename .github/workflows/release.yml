@@ -1,0 +1,30 @@
+# Al subir un tag vX.Y.Z: compila el instalador en Windows y lo publica como
+# GitHub Release junto con latest.yml, que es lo que lee la auto-actualización.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - name: Build and publish installer
+        run: npm run release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

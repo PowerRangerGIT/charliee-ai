@@ -1,0 +1,80 @@
+{
+  "name": "clicky-local",
+  "version": "0.2.0",
+  "description": "Clicky para Windows: compañero IA junto al cursor que ve tu pantalla, te escucha y señala cosas. Funciona con Claude Code y Gemini CLI (tu plan), o con APIs de Claude, OpenAI, Gemini, Ollama y LM Studio.",
+  "main": "dist/main/main.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "start": "node build.mjs && electron .",
+    "dev": "node build.mjs && electron . --dev",
+    "dist": "node scripts/make-icon.mjs && node build.mjs && electron-builder --win",
+    "release": "node scripts/make-icon.mjs && node build.mjs && electron-builder --win --publish always"
+  },
+  "build": {
+    "appId": "local.clicky.windows",
+    "productName": "Clicky Local",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "!dist/**/*.map",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/uiohook-napi/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": true,
+      "shortcutName": "Clicky Local",
+      "artifactName": "ClickyLocal-Setup-${version}.exe",
+      "installerLanguages": [
+        "es_ES",
+        "en_US"
+      ],
+      "language": "3082"
+    },
+    "npmRebuild": false
+  },
+  "dependencies": {
+    "uiohook-napi": "^1.5.5"
+  },
+  "devDependencies": {
+    "@huggingface/transformers": "^4.3.1",
+    "@types/node": "^26.6.5",
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "electron-updater": "^6.8.11"
+  },
+  "allowScripts": {
+    "electron@45.0.0": true,
+    "esbuild@0.28.2": true,
+    "electron-winstaller": false,
+    "onnxruntime-node": false,
+    "protobufjs": false,
+    "uiohook-napi": false
+  },
+  "author": "Clicky Local"
+}
