@@ -14,7 +14,7 @@ import {
   zoomCrop,
   type ScreenCapture,
 } from './capture';
-import { isFirstRun, loadSettings, saveSettings } from './config';
+import { isFirstRun, loadSettings, migrateLegacyConfig, saveSettings } from './config';
 import { HOTKEY_LABELS, setHotkey, startHotkeyListener, stopHotkeyListener } from './hotkey';
 import { chat, listModels, PROVIDER_LABELS, type ChatTurn } from './llm';
 import { addMarks, elementBoxInImage, type AnnotateRequest, type Mark } from './marks';
@@ -58,7 +58,7 @@ function toOverlays(channel: string, payload?: unknown) {
 }
 
 function status(message: string) {
-  console.log(`[clicky] ${message}`);
+  console.log(`[charliee] ${message}`);
   if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.webContents.send('app:status', message);
 }
 
@@ -406,7 +406,7 @@ function namesMatch(a: string, b: string) {
 
 /**
  * Diagnóstico opcional: guarda lo que vio la IA (con marcas), su respuesta y
- * dónde acabó señalando, en %APPDATA%\clicky-local\diagnostico.
+ * dónde acabó señalando, en %APPDATA%\charliee-ai\diagnostico.
  */
 async function saveDebug(captures: ScreenCapture[], raw: string, final: FinalPoint | null) {
   try {
@@ -481,10 +481,13 @@ function openSettings() {
   settingsWindow = new BrowserWindow({
     width: 760,
     height: Math.min(860, screen.getPrimaryDisplay().workAreaSize.height - 40),
-    title: 'Clicky Local — Ajustes',
-    icon: trayIcon(),
+    title: 'Charliee AI — Ajustes',
+    icon: appIcon(),
     autoHideMenuBar: true,
-    backgroundColor: '#0f1115',
+    backgroundColor: '#0b0c0e',
+    // Barra de título integrada en la cabecera, con los botones nativos de Windows.
+    titleBarStyle: 'hidden',
+    titleBarOverlay: { color: '#0b0c0e', symbolColor: '#8b9098', height: 34 },
     webPreferences: { preload: PRELOAD },
   });
   settingsWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -557,39 +560,13 @@ function preloadWhisper() {
 
 // --- Bandeja ---------------------------------------------------------------------------
 
-/** Icono del triángulo dibujado por código (sin assets binarios). */
+/** Iconos generados por build.mjs (scripts/icon.mjs) junto al bundle. */
 function trayIcon() {
-  const size = 32;
-  const poly = [
-    [3, 2],
-    [21, 11],
-    [12, 13],
-    [9, 22],
-  ].map(([x, y]) => [(x * size) / 24 + 2, (y * size) / 24]);
-  const insidePoly = (px: number, py: number) => {
-    let inside = false;
-    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-      const [xi, yi] = poly[i];
-      const [xj, yj] = poly[j];
-      if (yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) inside = !inside;
-    }
-    return inside;
-  };
-  const buf = Buffer.alloc(size * size * 4);
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      let hits = 0;
-      for (let sy = 0; sy < 4; sy++) for (let sx = 0; sx < 4; sx++) if (insidePoly(x + (sx + 0.5) / 4, y + (sy + 0.5) / 4)) hits++;
-      const alpha = Math.round((hits / 16) * 255);
-      const o = (y * size + x) * 4;
-      // BGRA premultiplicado, azul #3b82f6
-      buf[o] = Math.round((0xf6 * alpha) / 255);
-      buf[o + 1] = Math.round((0x82 * alpha) / 255);
-      buf[o + 2] = Math.round((0x3b * alpha) / 255);
-      buf[o + 3] = alpha;
-    }
-  }
-  return nativeImage.createFromBitmap(buf, { width: size, height: size });
+  return nativeImage.createFromPath(path.join(__dirname, '..', 'tray.png'));
+}
+
+function appIcon() {
+  return nativeImage.createFromPath(path.join(__dirname, '..', 'icon.png'));
 }
 
 function updateMenuItem(): Electron.MenuItemConstructorOptions {
@@ -644,12 +621,18 @@ function buildTrayMenu() {
 
 // --- Arranque ----------------------------------------------------------------------------
 
+try {
+  migrateLegacyConfig();
+} catch (err) {
+  console.error('[charliee] No pude migrar los ajustes de Clicky Local:', err);
+}
+
 app.on('second-instance', openSettings);
 
 app.whenReady().then(() => {
   const firstRun = isFirstRun();
   settings = loadSettings();
-  app.setAppUserModelId('local.clicky.windows');
+  app.setAppUserModelId('ai.charliee.app');
 
   session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => {
     callback(permission === 'media' || permission === 'speaker-selection');
@@ -664,7 +647,7 @@ app.whenReady().then(() => {
   screen.on('display-metrics-changed', createOverlays);
 
   tray = new Tray(trayIcon());
-  tray.setToolTip('Clicky Local');
+  tray.setToolTip('Charliee AI');
   tray.on('click', openSettings);
   buildTrayMenu();
 

@@ -98,11 +98,11 @@ function log(message: string) {
 }
 
 async function save() {
-  settings = await window.clicky.invoke('settings:save', collect());
+  settings = await window.charliee.invoke('settings:save', collect());
 }
 
 async function loadVoices() {
-  const voices: { name: string; lang: string; local: boolean }[] = await window.clicky.invoke('settings:voices');
+  const voices: { name: string; lang: string; local: boolean }[] = await window.charliee.invoke('settings:voices');
   const select = $<HTMLSelectElement>('systemVoice');
   // Primero las voces del idioma elegido.
   const langPrefix = settings.stt.language.slice(0, 2);
@@ -125,18 +125,19 @@ function showUpdate(u: { text: string; kind: string }) {
 }
 
 async function init() {
-  const data = await window.clicky.invoke('settings:get');
+  const data = await window.charliee.invoke('settings:get');
   settings = data.settings;
-  document.title = `Clicky Local ${data.version} — Ajustes`;
+  document.title = `Charliee AI ${data.version} — Ajustes`;
+  $('version').textContent = `v${data.version}`;
   showUpdate({ text: data.update, kind: data.updateKind });
-  window.clicky.on('app:update', showUpdate);
+  window.charliee.on('app:update', showUpdate);
   $('checkUpdates').addEventListener('click', async () => {
     await save();
-    await window.clicky.invoke('settings:check-updates');
+    await window.charliee.invoke('settings:check-updates');
   });
   $('updateAction').addEventListener('click', () => {
     const kind = $('updateAction').dataset.kind;
-    void window.clicky.invoke(kind === 'ready' ? 'settings:install-update' : 'settings:download-update');
+    void window.charliee.invoke(kind === 'ready' ? 'settings:install-update' : 'settings:download-update');
   });
 
   const providerSelect = $<HTMLSelectElement>('provider');
@@ -167,7 +168,7 @@ async function init() {
     const button = $<HTMLButtonElement>('loadModels');
     button.disabled = true;
     try {
-      const models: string[] = await window.clicky.invoke(
+      const models: string[] = await window.charliee.invoke(
         'settings:list-models',
         currentProvider,
         settings.providers[currentProvider],
@@ -189,7 +190,7 @@ async function init() {
   $('preloadWhisper').addEventListener('click', async () => {
     await save();
     log('Descargando modelo de voz…');
-    await window.clicky.invoke('settings:preload-whisper');
+    await window.charliee.invoke('settings:preload-whisper');
   });
 
   const ask = async () => {
@@ -199,7 +200,7 @@ async function init() {
     const answer = $('answer');
     answer.classList.remove('error');
     answer.textContent = 'Pensando…';
-    const result: { ok: boolean; text: string } = await window.clicky.invoke('settings:ask', text);
+    const result: { ok: boolean; text: string } = await window.charliee.invoke('settings:ask', text);
     answer.classList.toggle('error', !result.ok);
     answer.textContent = result.text || '(sin respuesta)';
   };
@@ -208,7 +209,7 @@ async function init() {
     if (e.key === 'Enter') void ask();
   });
 
-  $('clearHistory').addEventListener('click', () => window.clicky.invoke('settings:clear-history'));
+  $('clearHistory').addEventListener('click', () => window.charliee.invoke('settings:clear-history'));
 
   // Los enlaces de ayuda se abren fuera (main los intercepta con setWindowOpenHandler).
   document.addEventListener('click', (e) => {
@@ -219,7 +220,7 @@ async function init() {
     }
   });
 
-  window.clicky.on('app:status', log);
+  window.charliee.on('app:status', log);
 }
 
 void init();

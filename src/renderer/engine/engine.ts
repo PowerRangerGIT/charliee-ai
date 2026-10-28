@@ -13,7 +13,7 @@ env.backends.onnx.wasm!.wasmPaths = {
   wasm: new URL('./ort-wasm-simd-threaded.asyncify.wasm', location.href).href,
 };
 
-const emit = (channel: string, payload?: unknown) => window.clicky.send(channel, payload);
+const emit = (channel: string, payload?: unknown) => window.charliee.send(channel, payload);
 const status = (message: string) => emit('engine:status', message);
 
 // --- Grabación -----------------------------------------------------------------
@@ -304,7 +304,7 @@ const handlers: Record<string, (payload: any) => unknown> = {
   annotate,
 };
 
-window.clicky.on('engine:cmd', async (msg: { id: number; type: string; payload: unknown }) => {
+window.charliee.on('engine:cmd', async (msg: { id: number; type: string; payload: unknown }) => {
   try {
     const handler = handlers[msg.type];
     if (!handler) throw new Error(`Comando desconocido: ${msg.type}`);

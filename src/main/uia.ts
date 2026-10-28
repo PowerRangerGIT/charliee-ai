@@ -19,13 +19,13 @@ export interface UiElement {
 const SCRIPT = String.raw`
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-Add-Type -Namespace ClickyNative -Name Win -MemberDefinition @'
+Add-Type -Namespace CharlieeNative -Name Win -MemberDefinition @'
 [DllImport("user32.dll")] public static extern bool SetProcessDpiAwarenessContext(System.IntPtr value);
 [DllImport("user32.dll")] public static extern System.IntPtr GetForegroundWindow();
 [DllImport("user32.dll")] public static extern System.IntPtr FindWindow(string cls, string title);
 '@
 # Per-monitor v2: coordenadas en píxeles físicos reales en todos los monitores.
-[void][ClickyNative.Win]::SetProcessDpiAwarenessContext([System.IntPtr]::new(-4))
+[void][CharlieeNative.Win]::SetProcessDpiAwarenessContext([System.IntPtr]::new(-4))
 Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes, WindowsBase
 $A = [System.Windows.Automation.AutomationElement]
 $CT = [System.Windows.Automation.ControlType]
@@ -45,9 +45,9 @@ function Rect($r) { @{ x = $r.X; y = $r.Y; w = $r.Width; h = $r.Height } }
 
 function List-Controls {
   $roots = @()
-  $fg = [ClickyNative.Win]::GetForegroundWindow()
+  $fg = [CharlieeNative.Win]::GetForegroundWindow()
   if ($fg -ne [System.IntPtr]::Zero) { $roots += $A::FromHandle($fg) }
-  $tray = [ClickyNative.Win]::FindWindow('Shell_TrayWnd', $null)
+  $tray = [CharlieeNative.Win]::FindWindow('Shell_TrayWnd', $null)
   if ($tray -ne [System.IntPtr]::Zero -and $tray -ne $fg) { $roots += $A::FromHandle($tray) }
   $items = New-Object System.Collections.ArrayList
   $active = $cache.Activate()

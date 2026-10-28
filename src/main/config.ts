@@ -57,6 +57,22 @@ function configPath() {
   return path.join(app.getPath('userData'), 'config.json');
 }
 
+/**
+ * La app se llamaba "Clicky Local": trae sus ajustes la primera vez. Copia
+ * también "Local State", que guarda la clave de safeStorage; sin ella las API
+ * keys cifradas no se podrían leer. Llamar antes de app.whenReady().
+ */
+export function migrateLegacyConfig() {
+  const legacyDir = path.join(app.getPath('appData'), 'clicky-local');
+  if (fs.existsSync(configPath()) || !fs.existsSync(path.join(legacyDir, 'config.json'))) return;
+  const dir = path.dirname(configPath());
+  fs.mkdirSync(dir, { recursive: true });
+  for (const file of ['config.json', 'Local State']) {
+    const from = path.join(legacyDir, file);
+    if (fs.existsSync(from) && !fs.existsSync(path.join(dir, file))) fs.copyFileSync(from, path.join(dir, file));
+  }
+}
+
 function protect(value: string): string {
   if (!value || !safeStorage.isEncryptionAvailable()) return value;
   return ENC_PREFIX + safeStorage.encryptString(value).toString('base64');

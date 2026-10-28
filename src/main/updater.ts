@@ -72,13 +72,13 @@ export function startUpdater(opts: { autoDownload: () => boolean; onChange: (s: 
     pendingVersion = info.version;
     set(autoUpdater.autoDownload ? { kind: 'downloading', version: info.version, percent: 0 } : { kind: 'available', version: info.version });
     if (!autoUpdater.autoDownload) {
-      notify(`Clicky Local ${info.version} disponible`, 'Ábrelo desde la bandeja para descargarla.');
+      notify(`Charliee AI ${info.version} disponible`, 'Ábrelo desde la bandeja para descargarla.');
     }
   });
   autoUpdater.on('download-progress', (p) => set({ kind: 'downloading', version: pendingVersion, percent: p.percent }));
   autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
     set({ kind: 'ready', version: info.version });
-    notify(`Clicky Local ${info.version} lista`, 'Se instalará al cerrar la app, o reinicia ahora desde la bandeja.');
+    notify(`Charliee AI ${info.version} lista`, 'Se instalará al cerrar la app, o reinicia ahora desde la bandeja.');
   });
   autoUpdater.on('error', (err: Error) => set({ kind: 'error', message: err.message.split('\n')[0].slice(0, 160) }));
 
@@ -113,7 +113,7 @@ export async function downloadUpdate() {
 
 export function installUpdateNow() {
   if (state.kind !== 'ready') return;
-  // isSilent=true: sin asistente; isForceRunAfter=true: vuelve a abrir Clicky.
+  // isSilent=true: sin asistente; isForceRunAfter=true: vuelve a abrir Charliee.
   autoUpdater.quitAndInstall(true, true);
 }
 

@@ -1,8 +1,8 @@
-import type { ClickyBridge } from '../preload/preload';
+import type { CharlieeBridge } from '../preload/preload';
 
 declare global {
   interface Window {
-    clicky: ClickyBridge;
+    charliee: CharlieeBridge;
   }
 }
 

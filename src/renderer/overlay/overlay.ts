@@ -1,5 +1,5 @@
-// Overlay transparente (uno por monitor, click-through). Dibuja el triángulo
-// azul que sigue al cursor, la onda mientras escucha, el spinner mientras
+// Overlay transparente (uno por monitor, click-through). Dibuja el cursor
+// lima que sigue al cursor, la onda mientras escucha, el spinner mientras
 // piensa, y el vuelo en arco hasta el elemento que la IA quiere señalar.
 
 import type { PointTarget, VoiceState } from '../../shared/types';
@@ -118,7 +118,7 @@ function frame(now: number) {
       } else {
         mode = 'follow';
         flight = null;
-        window.clicky.send('overlay:point-done', displayId);
+        window.charliee.send('overlay:point-done', displayId);
       }
     }
   } else if (mode === 'pointing') {
@@ -164,7 +164,7 @@ function frame(now: number) {
   requestAnimationFrame(frame);
 }
 
-const on = window.clicky.on;
+const on = window.charliee.on;
 
 on('overlay:init', (info: { displayId: number; bounds: { x: number; y: number; width: number; height: number } }) => {
   displayId = info.displayId;

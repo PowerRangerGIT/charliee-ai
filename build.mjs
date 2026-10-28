@@ -2,6 +2,7 @@
 import { build } from 'esbuild';
 import fs from 'node:fs';
 import path from 'node:path';
+import { iconPng } from './scripts/icon.mjs';
 
 const out = 'dist';
 fs.rmSync(out, { recursive: true, force: true });
@@ -42,3 +43,11 @@ const ortDist = 'node_modules/onnxruntime-web/dist';
 for (const file of ['ort-wasm-simd-threaded.asyncify.mjs', 'ort-wasm-simd-threaded.asyncify.wasm']) {
   fs.copyFileSync(path.join(ortDist, file), path.join(out, 'renderer/engine', file));
 }
+
+// Iconos: build/icon.png para el instalador (electron-builder genera el .ico) y
+// los de la app y la bandeja (@2x para pantallas al 200%).
+fs.mkdirSync('build', { recursive: true });
+fs.writeFileSync('build/icon.png', iconPng(256));
+fs.writeFileSync(path.join(out, 'icon.png'), iconPng(256));
+fs.writeFileSync(path.join(out, 'tray.png'), iconPng(16));
+fs.writeFileSync(path.join(out, 'tray@2x.png'), iconPng(32));

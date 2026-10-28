@@ -1,7 +1,7 @@
 {
-  "name": "clicky-local",
+  "name": "charliee-ai",
   "version": "0.2.0",
-  "description": "Clicky para Windows: compañero IA junto al cursor que ve tu pantalla, te escucha y señala cosas. Funciona con Claude Code y Gemini CLI (tu plan), o con APIs de Claude, OpenAI, Gemini, Ollama y LM Studio.",
+  "description": "Charliee AI: compañera IA para Windows que vive junto a tu cursor, ve tu pantalla, te escucha y señala cosas. Funciona con Claude Code y Gemini CLI (tu plan), o con APIs de Claude, OpenAI, Gemini, Ollama y LM Studio.",
   "main": "dist/main/main.js",
   "license": "MIT",
   "private": true,
@@ -10,12 +10,12 @@
     "typecheck": "tsc --noEmit",
     "start": "node build.mjs && electron .",
     "dev": "node build.mjs && electron . --dev",
-    "dist": "node scripts/make-icon.mjs && node build.mjs && electron-builder --win",
-    "release": "node scripts/make-icon.mjs && node build.mjs && electron-builder --win --publish always"
+    "dist": "node build.mjs && electron-builder --win",
+    "release": "node build.mjs && electron-builder --win --publish always"
   },
   "build": {
-    "appId": "local.clicky.windows",
-    "productName": "Clicky Local",
+    "appId": "ai.charliee.app",
+    "productName": "Charliee AI",
     "directories": {
       "output": "release",
       "buildResources": "build"
@@ -46,8 +46,8 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "runAfterFinish": true,
-      "shortcutName": "Clicky Local",
-      "artifactName": "ClickyLocal-Setup-${version}.exe",
+      "shortcutName": "Charliee AI",
+      "artifactName": "CharlieeAI-Setup-${version}.exe",
       "installerLanguages": [
         "es_ES",
         "en_US"
@@ -76,5 +76,5 @@
     "protobufjs": false,
     "uiohook-napi": false
   },
-  "author": "Clicky Local"
+  "author": "Charliee AI"
 }

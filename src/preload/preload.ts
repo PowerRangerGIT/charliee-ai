@@ -25,6 +25,6 @@ const api = {
   },
 };
 
-contextBridge.exposeInMainWorld('clicky', api);
+contextBridge.exposeInMainWorld('charliee', api);
 
-export type ClickyBridge = typeof api;
+export type CharlieeBridge = typeof api;

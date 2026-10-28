@@ -102,7 +102,7 @@ function historyText(req: ChatRequest): string {
 }
 
 function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'clicky-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charliee-'));
   return fn(dir).finally(() => fs.rmSync(dir, { recursive: true, force: true }));
 }
 
