@@ -25,21 +25,6 @@ Descarga `CharlieeAI-Setup-x.y.z.exe` desde **Releases** y ábrelo. Como el inst
 
 La app instalada busca versiones nuevas en GitHub Releases al arrancar y cada 4 horas. Con **Actualizar automáticamente** activado (por defecto) la descarga en segundo plano y la instala al cerrar; también puedes **Reiniciar para actualizar** desde la bandeja o Ajustes → Actualizaciones.
 
-### Publicar una versión nueva
-
-1. Sube la versión en `package.json` (p. ej. `0.3.0`).
-2. Crea y sube el tag:
-
-```bash
-git tag v0.3.0
-```
-
-```bash
-git push origin main --tags
-```
-
-GitHub Actions compila el instalador en Windows y lo publica como Release con `latest.yml`; las apps instaladas lo detectan solas.
-
 ## Usar tu plan en vez de una API key
 
 Las APIs se pagan aparte de las suscripciones de chat. Con los proveedores CLI, Charliee llama a la herramienta oficial en modo headless y usa la sesión que ya tienes:
@@ -49,30 +34,16 @@ Las APIs se pagan aparte de las suscripciones de chat. Con los proveedores CLI, 
 
 Charliee busca el ejecutable solo; si no lo encuentra, pon la ruta en Ajustes. Cada pregunta arranca un proceso, así que tarda unos segundos más que la API. Ninguna herramienta puede tocar archivos ni ejecutar nada: Claude Code va sin herramientas y Gemini CLI en modo solo lectura.
 
-## Desarrollo
+## Cómo se usa
 
-```bash
-npm install
-```
-
-```bash
-npm start
-```
-
-1. Se abre Ajustes (icono del triángulo azul en la bandeja del sistema). Elige proveedor, pega la key o la URL local, pulsa **Cargar modelos** y **Guardar**.
+1. Al abrir la app por primera vez se abre Ajustes (también desde el icono de Charliee en la bandeja del sistema). Elige proveedor, pega la key o la URL local, pulsa **Cargar modelos** y **Guardar**.
 2. Mantén **Ctrl + Shift**, habla, suelta.
 3. Charliee piensa, te contesta en voz alta y, si ayuda, vuela hasta el elemento en pantalla.
 
 - **Esc** corta la respuesta.
 - Si mientras mantienes el atajo pulsas otra tecla (p. ej. Ctrl+Shift+T), no graba: así no estorba a tus atajos normales.
 - En Ajustes hay un cuadro para **probar sin micrófono**.
-- Sin visión (modelo de solo texto): desmarca "Enviar captura de pantalla".
-
-Para generar el instalador en local (sale en `release/`, sin publicar):
-
-```bash
-npm run dist
-```
+- Sin visión (modelo de solo texto): desactiva "Enviar captura de pantalla".
 
 ## Precisión al ver y señalar
 
@@ -112,7 +83,7 @@ Ctrl+Shift (uiohook) → micro 16 kHz (ventana engine) → Whisper local / API
 | `src/main/speech.ts` | STT/TTS por API (opcional) |
 | `src/main/config.ts` | Ajustes en `%APPDATA%\charliee-ai\config.json`, keys cifradas con DPAPI |
 | `src/renderer/engine` | Ventana oculta: micro, Whisper (transformers.js), reproducción de voz |
-| `src/renderer/overlay` | Triángulo azul, onda, spinner, vuelo en arco, resaltado y burbujas |
+| `src/renderer/overlay` | Cursor, onda, spinner, vuelo en arco, resaltado y burbujas |
 | `src/renderer/settings` | Ventana de ajustes |
 
 ## Privacidad
