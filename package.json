@@ -54,7 +54,15 @@
       ],
       "language": "3082"
     },
-    "npmRebuild": false
+    "npmRebuild": false,
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "PowerRangerGIT",
+        "repo": "charliee-ai",
+        "releaseType": "release"
+      }
+    ]
   },
   "dependencies": {
     "uiohook-napi": "^1.5.5"
@@ -76,5 +84,9 @@
     "protobufjs": false,
     "uiohook-napi": false
   },
-  "author": "Charliee AI"
+  "author": "Charliee AI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PowerRangerGIT/charliee-ai.git"
+  }
 }
