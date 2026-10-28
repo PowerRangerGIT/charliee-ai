@@ -24,6 +24,13 @@ jobs:
 
       - run: npm run typecheck
 
+      # electron-builder sube los archivos en paralelo; si el release no existe,
+      # cada subida puede crear el suyo y quedan duplicados. Crearlo antes lo evita.
+      - name: Create release
+        run: gh release create "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes --verify-tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and publish installer
         run: npm run release
         env:
